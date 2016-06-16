@@ -1,0 +1,152 @@
+
+#include <vector>
+#include <fstream>
+#include <iostream>
+#include "turn.h"
+#include "unit.h"
+#include "chart.h"
+using namespace std;
+
+
+Chart::Chart(){
+
+}
+void Chart::loadWorld(string name){
+	//INITIALISATION
+	vector<vector<container> >::iterator row;
+	vector<container>::iterator col;
+	//type of block to set it as
+	container block, block_reset;
+	char inChar;
+	int x, y;
+	string option ="";
+	//END OF INITIALIZATION;
+	//set name of loaded world
+	//this->worldName = name;
+
+	ifstream fin;
+	fin.open("./maps/" + name);
+	while(fin.fail()){
+		cout<<"invalid file, enter a file>> ";
+		cin>>name;
+		fin.open("./maps/" + name);
+	}
+		cout<<"Loading map..."<<endl;
+	this->worldName = name;
+	fin>>x>>y;
+	//creates 2D vector of size x,y
+	world.resize(x, vector<container> (y) );
+	//iterates through and sets type
+	x=1,y = 1;
+	for(row = world.begin(); row < world.end() ; row++){
+		for(col = row->begin(); col< row->end(); col++){
+			//gets type
+			fin.ignore();
+			fin>>block.geoType;
+			block.posX = x;
+			block.posY = y;
+			*col= block;
+			block = block_reset;
+			x++;
+		}
+		x=1;
+		y++;
+	}
+	fin.close();
+	cout<<"Done Loading."<<endl;
+
+}
+
+
+
+void Chart::displayWorld(){
+	vector<vector<container> >::iterator row;
+	vector<container>::iterator col;
+	for(row = world.begin(); row < world.end() ; row++){
+		for(col = row->begin(); col < row->end(); col++){
+			if(col->getGeoType()=='-')
+				cout<<' ';
+			else
+				col->displayType();
+			cout<<' ';
+		}
+		cout<<endl;
+	}
+}
+
+bool Chart::canEnter(int x, int y){
+	int i=1,j=1;
+	vector<vector <container> >::iterator row;
+	vector<container> ::iterator col;
+	for(row = world.begin(); row < world.end() || j==x; row++){
+		for(col = row->begin(); col< row->end()|| i==y; col++){
+
+			if(i==x && j==y){
+				//cout<<"found";			cout<<i<<','<<j<<endl;
+				if(col->getOccupance() == false){
+					if(col->getGeoType() == 'O')
+						col->geoType = '-';
+					return true;
+				}
+			}
+			i++;
+		}
+		i=1;
+		j++;
+	}
+	return false;
+}
+void Chart::searchFor(char spawnPt, int& x, int&y){
+	x=1,y=1;
+	vector<vector <container> >::iterator row;
+	vector<container> ::iterator col;
+	for(row = world.begin(); row < world.end(); row++){
+		for(col = row->begin(); col< row->end(); col++){
+			if(spawnPt == col->getGeoType()){
+				return;
+			}
+			y++;
+			//cout<<x<<','<<y<<endl;
+		}
+		y=1;
+		x++;
+
+	}
+}
+
+void Chart::container::displayType(){
+	cout<<geoType;
+}
+
+char Chart::container::getGeoType(){
+	return geoType;
+}
+bool Chart::container::getOccupance(){
+	return occupied;
+}
+int Chart::container::getPosX(){
+	return posX;
+}
+int Chart::container::getPosY(){
+	return posY;
+}
+bool Chart::container::checkAvailable(){
+	//if not occupied check if terrain is accessible
+	if(this->getOccupance() == false)
+		switch(this->getGeoType()){
+			case'!':
+			case'@':
+			case'$':
+			case'%':
+			case'^':
+			case'&':
+			case'*':
+			case'~':
+			case'#':
+			return false;
+				break;
+			default:	
+				return true;
+		}
+		else return false;
+}
