@@ -19,7 +19,7 @@ public:
 	int itemGetDefence()const;
 	int itemGetWorth()const;
 	int itemGetDurability()const;
-	
+	bool itemGetEquipped()const;
 	//printing and IOstream
 	void loadItem(string);
 	void viewItem();
@@ -28,7 +28,7 @@ public:
 	//statuses
 	void itemEquip();
 	void itemUnequip();
-	bool isEquipped();
+
 
 
 	//operators

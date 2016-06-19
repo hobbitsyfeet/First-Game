@@ -50,8 +50,13 @@ public:
   
 	  //functions for inventory
   	void pickUp(Item);//
- 	 void dropItem(Item);
- 	 bool search(const Item);//
+ 	 	void dropItem(Item);
+ 	 	bool search(const Item);//
+ 	 	bool searchWeaponEquipped();
+ 	 	Item& getItemEquipped();
+ 	 	Item getSearch(Item);
+
+
 	};
 	//Unit's own inventory and function to display
 	inventory inv;

@@ -36,7 +36,7 @@ int Item::itemGetWorth()const{
 int::Item::itemGetDurability() const{
   return itemDurability;
 }
-bool Item::isEquipped(){
+bool Item::itemGetEquipped() const{
 return itemIsEquipped;
 }
 
@@ -51,7 +51,7 @@ void Item::viewItem(){
 		cout<<"DEFENCE:["<<itemDefence<<"] ";
 	if(itemWorth != 0)
 		cout<<"WORTH:["<<itemWorth<<"] ";
-	cout<<itemDurability;
+	cout<<"Durability:["<<itemDurability<<"] ";
 	if(itemIsEquipped == true)
 		cout<<" [EQUIPPED]";
 	cout<<endl;

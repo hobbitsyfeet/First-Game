@@ -73,7 +73,7 @@ void Turn::run(Chart& world){
     else if(option == "target"){
       cout<<"Who >>";
       cin >> option;
-        target.loadUnit("/enemies/"+option);
+        target.loadUnit(option);
         cout<<"targeted:"<<endl;
         target.displayStats();
     }

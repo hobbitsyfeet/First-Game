@@ -75,22 +75,42 @@ void Unit::displayStats(){
 //passes in another unit and does damage accordingly
 void Unit::attackUnit(Unit& target){
   int totalDamage = (this->getAttack()-target.getDefence());
+  Item* equipmentUsed;
+
   //if not dead, attack
   if(target.getHealth() > totalDamage){
-    //damage inflicted
-    if(totalDamage > 0){
-      target.health -= totalDamage;
-      cout<<this->getName()<<" dealt "
-	  <<totalDamage
-	  <<" damage to "<<target.getName();
+    if(inv.searchWeaponEquipped()){
+      //getEquipped Weapon
+      equipmentUsed = &inv.getItemEquipped();
+      //if weapon's durability
+      if(equipmentUsed->itemGetDurability() > 0){
+      //if the total damage is positive
+       if(totalDamage > 0){
+          //do damage
+          target.health -= totalDamage;
+          equipmentUsed->decrementDurability();
+          //decrement item's durability
+        }
+        //no damage inflicted
+        else{
+         cout<<this->getName()<<" dealt 0 damage to"<< target.getName();
+        }
+      }
+      //the item is broken
+      else{
+        totalDamage = 1;
+        cout<<equipmentUsed->itemGetName()<<" is broken!"<<endl;
+        target.health -= totalDamage;
+      }
+       //show results
+       cout<<this->getName()<<" dealt "
+	     <<totalDamage
+	     <<" damage to "<<target.getName();
     }
-    //no damage inflicted
-    else{
-      cout<<this->getName()<<" dealt 0 damage to"<< target.getName();
-    }
-    //save b/c stat change
-    target.saveUnit("/enemies/"+target.getName());
+      //save b/c stat change
+     target.saveUnit("/enemies/"+target.getName());
   }
+
   //they are dead, announce and do no action
   else{
     target.health = 0;
@@ -232,6 +252,11 @@ void Unit::unEquipItem(string i){
 void Unit::loadUnit(string file){
   ifstream fin;
   fin.open("./saves/" + file);
+  while(fin.fail()){
+    cout<<"invalid player, enter a name>> ";
+    cin>>file;
+    fin.open("./saves/" + file);
+  }
   fin>>name>>level>>health>>stamina>>attack>>defence>>gold>>experience>>dice;
   fin>>leftHandEquipped>>rightHandEquipped>>headEquipped>>torsoEquipped>>legsEquipped>>feetEquipped;
   fin>>posX>>posY;
@@ -245,6 +270,7 @@ void Unit::loadUnit(string file){
 void Unit::saveUnit(string file){
   ofstream fout;
   fout.open("./saves/" + file);
+
   fout<<file<<' '<<level<<' '<<health<<' '<<stamina<<' '<<attack<<' '<<defence<<' '<<gold<<' '<<experience<<' '<<dice<<' ';
   fout<<leftHandEquipped<<' '<<rightHandEquipped<<' '<<headEquipped<<' '<<torsoEquipped<<' '<<legsEquipped<<' '<<feetEquipped<<' ';
   fout<<posX<<' '<<posY<<' ';
@@ -340,5 +366,48 @@ void Unit::inventory::loadInventory(string unitName){
     pickUp(temp);
   }
   fin.close();
+}
+
+
+bool Unit::inventory::searchWeaponEquipped(){
+  vector<Item>::iterator it;
+
+  for(it=invContainer.begin(); it< invContainer.end(); it++){
+    if(it->itemGetType() == "Right-Hand" && it->itemGetEquipped() == true){
+      return true;
+    }
+    else if(it->itemGetType() == "Left-Hand" && it->itemGetEquipped() == true){
+       return true;
+    }
+    else if(it->itemGetType() == "Two-Hands" && it->itemGetEquipped() == true){
+        return true;
+    }
+  }
+  return false;
+}
+
+Item Unit::inventory::getSearch(Item iSearch){
+  vector<Item>::iterator it;
+  for(it=invContainer.begin(); it< invContainer.end(); it++){
+    if (*it == iSearch)
+      return *it;
+  }
+  return *it;
+  cout<<"test";
+}
+
+Item& Unit::inventory::getItemEquipped(){
+    vector<Item>::iterator it;
+    for(it=invContainer.begin(); it< invContainer.end(); it++){
+      if(it->itemGetType() == "Right-Hand" && it->itemGetEquipped() == true){
+        return *it;
+    }
+     else if(it->itemGetType() == "Left-Hand" && it->itemGetEquipped() == true){
+      return *it;
+     }
+      else if(it->itemGetType() == "Two-Hands" && it->itemGetEquipped() == true){
+      return *it;
+    }
+  }
 }
 
