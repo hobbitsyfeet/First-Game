@@ -1,10 +1,10 @@
 
 #include "item.h"
-//#include "./unit.h"
 #include <fstream>
 #include <iostream>
 using namespace std;
 
+//default constructor
 Item::Item(string n , string type, int dam, int def, int val,int dur, bool held){
 	itemName=n;
 	itemDamage=dam;
@@ -15,26 +15,33 @@ Item::Item(string n , string type, int dam, int def, int val,int dur, bool held)
 	itemDurability= dur;
 }
 
-
-string Item::itemGetName(){
+//*******STATS*********
+//Functions:Getters
+//returns individually values of stats
+string Item::itemGetName()const{
 	return itemName;
 }
-string Item::itemGetType(){
+string Item::itemGetType()const{
 	return itemType;
 }
-int Item::itemGetDamage(){
+int Item::itemGetDamage()const{
 	return itemDamage;
 }
-int Item::itemGetDefence(){
+int Item::itemGetDefence()const{
 	return itemDefence;
 }
-int Item::itemGetWorth(){
+int Item::itemGetWorth()const{
 	return itemWorth;
 }
-int::Item::itemGetDurability(){
+int::Item::itemGetDurability() const{
   return itemDurability;
 }
+bool Item::isEquipped(){
+return itemIsEquipped;
+}
 
+//Function:displayStats
+//prints out status of Unit in an in-line order
 void Item::viewItem(){
 	cout<<itemName<<" ";
 	cout<<itemType<<" ";
@@ -44,27 +51,26 @@ void Item::viewItem(){
 		cout<<"DEFENCE:["<<itemDefence<<"] ";
 	if(itemWorth != 0)
 		cout<<"WORTH:["<<itemWorth<<"] ";
+	cout<<itemDurability;
 	if(itemIsEquipped == true)
 		cout<<" [EQUIPPED]";
 	cout<<endl;
 }
+
+//**********Modifiers***********
 void Item::decrementDurability(){
   itemDurability --;
 }
 void Item::itemEquip(){
 	itemIsEquipped = true;
 }
-
 void Item::itemUnequip(){
 	itemIsEquipped = false;
 }
 
-bool Item::isEquipped(){
-return itemIsEquipped;
-}
 
 
-//FileStream
+//***********FILE************
 void Item::loadItem(string Name){
 	ifstream fin;
 	fin.open("item.list");

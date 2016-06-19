@@ -23,11 +23,6 @@ public:
 	void loadUnit(string);//
 	void saveUnit(string);//
 
-	//item related
-	//	vector<Item> proximity;
-	//void equipItem(Item);
-	//	void unEquiptItem(Item);
-
 //************get stats*********
 	string getName()const;//
 	int getLevel()const;//
@@ -46,22 +41,21 @@ public:
 	int distanceUnit(const Unit&);
 
 //*********Inventory************
-struct inventory{
-  //main container for inventory
-  vector<Item> invContainer;
+	struct inventory{
+  	//main container for inventory
+  	vector<Item> invContainer;
 	
-  void loadInventory(string);//
-  void saveInventory(string);//
+  	void loadInventory(string);//
+  	void saveInventory(string);//
   
-  //
-  void pickUp(Item);//
-  void dropItem(Item);
-  bool search(const Item);//
-  Item findItem(string);
-  //functions for inventory
-};
-inventory inv;
-		void displayInv();//
+	  //functions for inventory
+  	void pickUp(Item);//
+ 	 void dropItem(Item);
+ 	 bool search(const Item);//
+	};
+	//Unit's own inventory and function to display
+	inventory inv;
+	void displayInv();//
 
 //******get Equipment***********
 	void unEquipItem(string);
@@ -72,10 +66,10 @@ inventory inv;
 	bool torsoEquipped;
 	bool legsEquipped;
 	bool feetEquipped;
-	//operators
+	//************Operators************
 	Unit& operator = (const Unit&);//
 private:
-	//Unit stats
+	//*****Unit stats*****
 	int health;
 	int stamina;
 	int attack;
@@ -93,6 +87,5 @@ private:
 	bool torso;
 	bool legs;
 	bool feet;
-	//Unit inventory
 };	//end of Unit
 #endif

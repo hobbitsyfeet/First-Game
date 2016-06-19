@@ -13,12 +13,12 @@ public:
   //modifiers
   void decrementDurability();
 	//GETTERS
-	string itemGetName();
-	string itemGetType();
-	int itemGetDamage();
-	int itemGetDefence();
-	int itemGetWorth();
-	int itemGetDurability();
+	string itemGetName()const;
+	string itemGetType()const;
+	int itemGetDamage()const;
+	int itemGetDefence()const;
+	int itemGetWorth()const;
+	int itemGetDurability()const;
 	
 	//printing and IOstream
 	void loadItem(string);

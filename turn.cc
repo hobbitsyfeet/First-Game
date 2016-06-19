@@ -84,9 +84,7 @@ void Turn::run(Chart& world){
 
     }
     else if(option == "attack"){
-      if(player.inv.findItem())
       player.attackUnit(target);
-      
     }
     else if (option == "distance"){
       cout<<player.distanceUnit(target);
