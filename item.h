@@ -7,7 +7,8 @@ using namespace std;
 
 class Item{
 public:
-  Item(string="unknown", string ="Right-Hand",int=0,int=0,int=0,int=20,bool= false);
+	//Order:NAME,Type,Range,Damage,Defence, Worth, Durability, equipped;
+  Item(string="Fists", string ="Two-Hands",int=1,int=0,int=0,int=0,int=20,bool= false);
 
 
   //modifiers
@@ -15,6 +16,7 @@ public:
 	//GETTERS
 	string itemGetName()const;
 	string itemGetType()const;
+	int itemGetRange()const;
 	int itemGetDamage()const;
 	int itemGetDefence()const;
 	int itemGetWorth()const;
@@ -43,6 +45,7 @@ private:
 	//variables
 	string itemName;
 	string itemType;
+	int itemRange;
 	int itemDamage;
 	int itemDefence;
 	int itemWorth;

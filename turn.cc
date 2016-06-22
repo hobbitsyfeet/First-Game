@@ -16,7 +16,8 @@ void Turn::run(Chart& world){
 //worlds.loadWorld(option); 
 
   while(option != "end"){
-    cout<<endl<<">>";
+
+    cout<<">>";
     cin>>option;
       
     if(option == "inv"){
@@ -87,29 +88,53 @@ void Turn::run(Chart& world){
       player.attackUnit(target);
     }
     else if (option == "distance"){
-      cout<<player.distanceUnit(target);
+      cout<<player.distanceTo(target.getPosX(),target.getPosY());
     }
+    else if (option == "tbag"){
+      cout<<"how many times?>>";
+      int tbags;
+      cin>>tbags;
+      //static_cast<int>option;
+      for(int i =1;i<=tbags; i++){
+      cout<<player.getName()<<" T-bagged ";
+
+      if(target.getName() == player.getName())
+        cout<<"himself ";
+      else
+      cout<<target.getName()<<" ";
+
+      cout<<i;
+      if(i<=1)
+        cout<<" time"<<endl;
+      else
+          cout<<" times"<<endl;
+      }
+    }
+    player.saveUnit(player.getName());
+    target.saveUnit(target.getName());
+    //if you end up attacking yourself, stats wouldn't differ from saved info.
+    //player.loadUnit(player.getName());
   }
 }
 
 Unit Turn::getPlayer(){
   string option="";
   //if(player.getName() == "NoName"){
-    cout<<"new or load>>"<<endl;
-    cin>>option;
+ // do{
+   cout<<"new or load>>"<<endl;
+   cin>>option;
+  //}while(option !=);
     if(option == "new"){
       cout<<"who? >>";
       cin>> option;
-    // cout<<option;
-     player.saveUnit(option);
+      player.saveUnit(option);
       player.loadUnit(option); 
     }
-   else if(option == "load"){
+    else if(option == "load"){
       cout<<"who? >>";
-     cin >> option;
-          //cout<<option;
-     player.loadUnit(option);
+      cin >> option;
+      player.loadUnit(option);
     }
-  //}
+
   return player;
 }

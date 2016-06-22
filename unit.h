@@ -9,7 +9,7 @@ using namespace std;
 class Unit{
 public:
 //CONSTRUCTORS
-	Unit(string="NoName", int=1,int =15,int=2, int=1,int=0, int=0,int=0, int = 6, int =0, int=0);
+	Unit(string="NoName", int=1,int =15,int=2, int=0,int =1,int=0, int=0,int=0, int = 6, int =0, int=0);
 
 //*******Map_Position********
 	int posX;
@@ -17,7 +17,7 @@ public:
 	void getPos();
 	int getPosX();
 	int getPosY();
-	void distanceFromUnit();
+	//void distanUnit();
 
 //********I/O_Files************
 	void loadUnit(string);//
@@ -27,6 +27,7 @@ public:
 	string getName()const;//
 	int getLevel()const;//
 	int getExp()const;//
+	int getRange()const;
 	int getHealth()const;//
 	int getDefence()const;//
 	int getAttack()const;//
@@ -38,7 +39,7 @@ public:
 
 //***********COMBAT*************
 	void attackUnit(Unit&);//
-	int distanceUnit(const Unit&);
+	int distanceTo(const int, const int);
 
 //*********Inventory************
 	struct inventory{
@@ -73,16 +74,22 @@ public:
 	bool feetEquipped;
 	//************Operators************
 	Unit& operator = (const Unit&);//
+
+	friend ostream& operator << (ostream&, const Unit&);
+	friend istream& operator >> (istream&, Unit&);
+
 private:
 	//*****Unit stats*****
+
+	string name;
 	int health;
 	int stamina;
 	int attack;
+	int range;
 	int defence;
 	int gold;
 	int experience;
 	int level;
-	string name;
 	int dice;
 
 	//Equipped items

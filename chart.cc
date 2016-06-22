@@ -25,11 +25,11 @@ void Chart::loadWorld(string name){
 	//this->worldName = name;
 
 	ifstream fin;
-	fin.open("./maps/" + name);
+	fin.open("./maps/" + name + ".txt");
 	while(fin.fail()){
 		cout<<"invalid file, enter a file>> ";
 		cin>>name;
-		fin.open("./maps/" + name);
+		fin.open("./maps/" + name + ".txt");
 	}
 		cout<<"Loading map..."<<endl;
 	this->worldName = name;
