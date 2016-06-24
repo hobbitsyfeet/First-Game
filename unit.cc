@@ -68,7 +68,7 @@ int Unit:: getPosX(){
 void Unit::displayStats(){
   cout<<"==============STATS=============="<<endl;
   cout<<setfill(' ');
-  cout<<"NAME:"<<name<<endl;
+  cout<<"NAME:"<<name<<" x:"<<posX<<" y:"<< posY<<endl;
   cout<<"Health:"<<left<<setw(10)<<health<<"Experience:"<<experience<<endl;
   cout<<"Attack:"<<left<<setw(10)<<attack<<"Defence:"<<defence<<endl;
   cout<<setfill('=')<<setw(35)<<"==";
@@ -107,7 +107,7 @@ void Unit::attackUnit(Unit& target){
         //the item is broken
         else{
           totalDamage = 1;
-          cout<<equipmentUsed->itemGetName()<<" is broken!";
+          cout<<equipmentUsed->itemGetName()<<" is broken! "<<endl;
           target.health -= totalDamage;
        }
          //show results
@@ -133,6 +133,10 @@ void Unit::attackUnit(Unit& target){
 //Function:lootUnit
 //will access another unit's inventory
 void Unit::lootUnit(string iName,Unit& target){
+  if(iName == "Fists"){
+    cout<<"You cannot yet remove hands";
+    return;
+  }
   if(target.getHealth() == 0 && distanceTo(target.getPosX(),target.getPosY() ) <= 1){
   vector<Item>::iterator it;
   for(it=target.inv.invContainer.begin();it<target.inv.invContainer.end();it++){
@@ -161,7 +165,8 @@ void Unit::lootUnit(string iName,Unit& target){
 int Unit::distanceTo(const int targetX, const int targetY){
   int dist;
   //distance between 2 points
-  dist = sqrt((targetX - this->getPosX()) + targetY - this->getPosY());
+  dist = sqrt( ( (targetX - this->getPosX())*(targetX - this->getPosX()) )
+    +  ( targetY - this->getPosY())*(targetY - this->getPosY()) );
   //because distance cannot be negative
   if(dist< 0)
     return -(dist);
