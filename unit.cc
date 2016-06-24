@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 using namespace std;
@@ -106,7 +107,7 @@ void Unit::attackUnit(Unit& target){
         //the item is broken
         else{
           totalDamage = 1;
-          cout<<equipmentUsed->itemGetName()<<" is broken!"<<endl;
+          cout<<equipmentUsed->itemGetName()<<" is broken!";
           target.health -= totalDamage;
        }
          //show results
@@ -121,11 +122,36 @@ void Unit::attackUnit(Unit& target){
     //they are dead, announce and do no action
     else{
      target.health = 0;
-     cout<<target.getName()<<" is dead"<<endl;
+     cout<<target.getName()<<" is dead";
     }
   }
   else{
     cout<<"Not in range";
+  }
+}
+
+//Function:lootUnit
+//will access another unit's inventory
+void Unit::lootUnit(string iName,Unit& target){
+  if(target.getHealth() == 0 && distanceTo(target.getPosX(),target.getPosY() ) <= 1){
+  vector<Item>::iterator it;
+  for(it=target.inv.invContainer.begin();it<target.inv.invContainer.end();it++){
+      if(iName == it->itemGetName()){
+       it->itemUnequip();
+       inv.pickUp(*it);
+       target.inv.invContainer.erase(it);
+      }
+    }
+    cout<<"You grabbed "<<iName;
+  }
+  else{
+    cout<<"Cannot loot"<<target.getName();
+    if(distanceTo(target.getPosX(),target.getPosY() ) > 1 ){
+      if(target.getHealth() > 0)
+        cout<<" is still alive, cannot grab his things just yet!";
+      else
+        cout<<" is too far";
+    }
   }
 }
 
@@ -194,11 +220,12 @@ void Unit::equipItem(string i){
       }
       
       if(didEquip == true){
-        cout<<i<<" equipped"<<endl;
+        cout<<i<<" equipped";
 	      attack += it->itemGetDamage();
       	range += it->itemGetRange();
         defence += it->itemGetDefence();
         it->itemEquip();
+        break;
       }
     }
   }
@@ -244,14 +271,15 @@ void Unit::unEquipItem(string i){
 	didEquip = true;
       }
       if(didEquip == true){
-	cout<<i<<" un-equipped"<<endl;
+	cout<<i<<" un-equipped";
 	attack -= it->itemGetDamage();
   range -= it->itemGetRange();
 	defence -= it->itemGetDefence();
 	it->itemUnequip();
+  break;
       }
       else
-	cout<<"Could not un-equip "<<i<<endl;
+	cout<<"Could not un-equip "<<i;
     }
   }
 }
@@ -336,7 +364,7 @@ void Unit::displayInv(){
 
 //NOT DONE
 void Unit::inventory::pickUp(Item a){
-  invContainer.push_back(a);
+    invContainer.push_back(a);
 }
 //NOT DONE
 void Unit::inventory::dropItem(Item a){
@@ -366,30 +394,12 @@ void Unit::inventory::saveInventory(string unitName){
 //creates an item with those stats
 //pushes it into Unit's inventory
 void Unit::inventory::loadInventory(string unitName){
-  
-  //assigns default stats for if inventory is empty or new
-  /*
-  string iName = "Pebble";
-  string iType = "Right-Hand";
-  int ran = 1;
-  int dam = 1;
-  int def = 0;
-  int val = 1;
-  int dur = 20;
-  bool eq = 0;
-  */
   Item temp;
   ifstream fin;
   fin.open("./saves/" + unitName +"Inv");
-  
-  //for each item in file get stats and overwrite old ones
+  //for each item in file get stats and overwrite temp
   while(!fin.eof()){
     fin>>temp;
-    /*
-    fin>>iName>>iType>>ran>>dam>>def>>val>>dur>>eq;
-    //create temp item with stats
-    Item temp(iName, iType, dam, def,val,dur,eq);
-    */
     //push into inventory
     pickUp(temp);
   }

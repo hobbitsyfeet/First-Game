@@ -48,7 +48,6 @@ public:
 	
   	void loadInventory(string);//
   	void saveInventory(string);//
-  
 	  //functions for inventory
   	void pickUp(Item);//
  	 	void dropItem(Item);
@@ -56,12 +55,12 @@ public:
  	 	bool searchWeaponEquipped();
  	 	Item& getItemEquipped();
  	 	Item getSearch(Item);
-
-
 	};
 	//Unit's own inventory and function to display
 	inventory inv;
 	void displayInv();//
+	void lootUnit(string,Unit&);
+
 
 //******get Equipment***********
 	void unEquipItem(string);

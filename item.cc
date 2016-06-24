@@ -89,6 +89,18 @@ bool Item::operator == (const Item& i){
 	else 
 		return false;
 }
+bool Item::operator <(const Item& i){
+	if(itemName < i.itemName)
+		return true;
+	else 
+		return false;
+}
+bool Item::operator >(const Item& i){
+	if(itemName > i.itemName)
+		return true;
+	else 
+		return false;
+}
 
 Item& Item::operator = (const Item& i){
 	itemName = i.itemName;

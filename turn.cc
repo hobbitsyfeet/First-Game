@@ -17,7 +17,7 @@ void Turn::run(Chart& world){
 
   while(option != "end"){
 
-    cout<<">>";
+    cout<<endl<<">>";
     cin>>option;
       
     if(option == "inv"){
@@ -61,6 +61,12 @@ void Turn::run(Chart& world){
       player.getPos();
       world.displayWorld();
     }
+    else if(option == "pos"){
+      player.getPos();
+    }
+    else if(option == "target-pos"){
+      target.getPos();
+    }
     else if(option == "equip"){
       cout<<"What do you want to equip? >>";
       cin>>option;
@@ -86,6 +92,13 @@ void Turn::run(Chart& world){
     }
     else if(option == "attack"){
       player.attackUnit(target);
+    }
+    else if(option =="loot"){
+      target.displayInv();
+      cout<<"choose an item";
+      cin>>option;
+      if(option!="end")
+        player.lootUnit(option,target);
     }
     else if (option == "distance"){
       cout<<player.distanceTo(target.getPosX(),target.getPosY());
