@@ -7,9 +7,34 @@
 using namespace std;
 
 class Unit{
+
+private:
+	//*****Unit stats*****
+
+	string name;
+	int health;
+	int maxHealth;
+	int stamina;
+	int attack;
+	int range;
+	int defence;
+	int gold;
+	int maxExperience;
+	int experience;
+	int level;
+	int dice;
+
+	//Equipped items
+	bool leftHand;
+	bool rightHand;
+	bool head;
+	bool torso;
+	bool legs;
+	bool feet;
 public:
 //CONSTRUCTORS
-	Unit(string="NoName", int=1,int =15,int=2, int=0,int =1,int=0, int=0,int=0, int = 6, int =0, int=0);
+				//name,level,health,attack
+	Unit(string="NoName", int=1,int =15,int=15,int=2, int=0,int =1,int=0,int=45, int=0,int=0, int = 6, int =0, int=0);
 
 //*******Map_Position********
 	int posX;
@@ -24,10 +49,14 @@ public:
 	void saveUnit(string);//
 
 //************get stats*********
+	int rollDice();
+
 	string getName()const;//
 	int getLevel()const;//
+	int getMaxExp()const;
 	int getExp()const;//
 	int getRange()const;
+	int getMaxHealth()const;
 	int getHealth()const;//
 	int getDefence()const;//
 	int getAttack()const;//
@@ -36,7 +65,7 @@ public:
 
 	void displayStats();
 
-
+	void levelUp();
 //***********COMBAT*************
 	void attackUnit(Unit&);//
 	int distanceTo(const int, const int);
@@ -77,26 +106,5 @@ public:
 	friend ostream& operator << (ostream&, const Unit&);
 	friend istream& operator >> (istream&, Unit&);
 
-private:
-	//*****Unit stats*****
-
-	string name;
-	int health;
-	int stamina;
-	int attack;
-	int range;
-	int defence;
-	int gold;
-	int experience;
-	int level;
-	int dice;
-
-	//Equipped items
-	bool leftHand;
-	bool rightHand;
-	bool head;
-	bool torso;
-	bool legs;
-	bool feet;
 };	//end of Unit
 #endif

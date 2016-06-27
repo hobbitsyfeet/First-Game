@@ -8,15 +8,21 @@
 #include <iomanip>
 using namespace std;
 //default constructor
-Unit::Unit(string Name,int Level, int Health,int Attack,int Range,int Defence, int Exp, int Gold, int Stam, int Dice, int xpos, int ypos){
+Unit::Unit(string Name,int Level, int Health,int MaxHealth,int Attack,int Range,int Defence, int Exp, int MaxExp, int Gold, int Stam, int Dice, int xpos, int ypos){
   name=Name;
   level = Level;
+
   health=Health;
+  maxHealth=MaxHealth;
+
   attack=Attack;
   range=Range;
   defence=Defence;
+
   gold=Gold;
+
   experience=Exp;
+  maxExperience = MaxExp;
   stamina = Stam;
   dice = Dice;
 
@@ -26,6 +32,9 @@ Unit::Unit(string Name,int Level, int Health,int Attack,int Range,int Defence, i
 }
 
 //*******STATS*********
+  int rollDice(int dice){
+    return (rand() % dice) +1;
+  }
 
 //Functions:Getters
 //returns individually values of stats
@@ -34,6 +43,9 @@ string Unit::getName()const{
 }
 int Unit::getLevel()const{
 	return level;
+}
+int Unit::getMaxHealth()const{
+  return maxHealth;
 }
 int Unit::getHealth()const{
   return health;
@@ -53,6 +65,9 @@ int Unit::getDefence()const{
 int Unit::getGold()const{
   return gold;
 }
+int Unit::getMaxExp()const{
+  return ( ((level)*(level)) + (22*(level)) +(22) );
+}
 int Unit::getExp()const{
   return experience;
 }
@@ -63,14 +78,37 @@ int Unit:: getPosX(){
 	return posX;
 }
 
+void Unit::levelUp(){
+  if(experience >= maxExperience){
+    //increases level
+    level++;
+    //resets exp starting from 0+excess experience
+    experience -= maxExperience;
+    //increase maxExperience with equation y=(x^2)+(22x)+22
+    maxExperience = ( ((level)*(level)) + (22*(level)) +(22) );
+
+    maxHealth++;
+    if(level %3 ==0){
+      maxHealth++;
+    }
+    if(level%5 == 0){
+      maxHealth++;
+    }
+    if(level%10 == 0){
+      attack++;
+      defence++;
+      dice++;
+    }
+  }
+}
 //Function:displayStats
 //prints out status of Unit in an in-line order
 void Unit::displayStats(){
   cout<<"==============STATS=============="<<endl;
   cout<<setfill(' ');
   cout<<"NAME:"<<name<<" x:"<<posX<<" y:"<< posY<<endl;
-  cout<<"Health:"<<left<<setw(10)<<health<<"Experience:"<<experience<<endl;
-  cout<<"Attack:"<<left<<setw(10)<<attack<<"Defence:"<<defence<<endl;
+  cout<<"Health:"<<health<<'/'<<left<<setw(14)<<maxHealth<<"Experience:"<<experience<<endl;
+  cout<<"Attack:"<<left<<setw(17)<<attack<<"Defence:"<<defence<<endl;
   cout<<setfill('=')<<setw(35)<<"==";
 }
 
@@ -121,8 +159,15 @@ void Unit::attackUnit(Unit& target){
 
     //they are dead, announce and do no action
     else{
-     target.health = 0;
-     cout<<target.getName()<<" is dead";
+      if(target.getHealth() != 0){
+        target.health = 0;
+        experience += target.getExp();
+        cout<<"you killed "<<target.getName()<<" and gained"<<target.getExp()<<" experience."<<endl;
+        if(experience >= maxExperience)
+          this->levelUp();
+      }
+      else
+        cout<<target.getName()<<" is dead";
     }
   }
   else{
@@ -137,7 +182,7 @@ void Unit::lootUnit(string iName,Unit& target){
     cout<<"You cannot yet remove hands";
     return;
   }
-  if(target.getHealth() == 0 && distanceTo(target.getPosX(),target.getPosY() ) <= 1){
+  if(distanceTo(target.getPosX(),target.getPosY() ) <= 1){
   vector<Item>::iterator it;
   for(it=target.inv.invContainer.begin();it<target.inv.invContainer.end();it++){
       if(iName == it->itemGetName()){
@@ -326,24 +371,27 @@ void Unit::saveUnit(string file){
 Unit& Unit::operator = (const Unit& i){
   name = i.name;
   health = i.health;
+  maxHealth = i.maxHealth;
   stamina = i.stamina;
   attack = i.attack;
   defence = i.defence;
   gold = i.gold;
   experience = i.experience;
+  maxExperience = i.maxExperience;
+  dice = i.dice;
   return *this;
 }
 
 //IO operators
 ostream& operator << (ostream& oStr, const Unit& i){
-  oStr<<i.name<<' '<<i.level<<' '<<i.health<<' '<<i.stamina<<' '<<i.attack<<' '<<i.range<<' '<<i.defence<<' '<<i.gold<<' '<<i.experience<<' '<<i.dice<<' ';
+  oStr<<i.name<<' '<<i.level<<' '<<i.health<<' '<<i.maxHealth<<' '<<i.stamina<<' '<<i.attack<<' '<<i.range<<' '<<i.defence<<' '<<i.gold<<' '<<i.experience<<' '<<i.maxExperience<<' '<<i.dice<<' ';
   oStr<<i.leftHandEquipped<<' '<<i.rightHandEquipped<<' '<<i.headEquipped<<' '<<i.torsoEquipped<<' '<<i.legsEquipped<<' '<<i.feetEquipped<<' ';
   oStr<<i.posX<<' '<<i.posY<<' ';
   return oStr;
 }
 
 istream& operator >> (istream& iStr, Unit& i){
-  iStr>>i.name>>i.level>>i.health>>i.stamina>>i.attack>>i.range>>i.defence>>i.gold>>i.experience>>i.dice;
+  iStr>>i.name>>i.level>>i.health>>i.maxHealth>>i.stamina>>i.attack>>i.range>>i.defence>>i.gold>>i.experience>>i.maxExperience>>i.dice;
   iStr>>i.leftHandEquipped>>i.rightHandEquipped>>i.headEquipped>>i.torsoEquipped>>i.legsEquipped>>i.feetEquipped;
   iStr>>i.posX>>i.posY;
   return iStr;

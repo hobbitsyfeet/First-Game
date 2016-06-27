@@ -19,38 +19,41 @@ void Turn::run(Chart& world){
 
     cout<<endl<<">>";
     cin>>option;
-      
+
+      //**INVENTORY**
     if(option == "inv"){
       player.displayInv();
     }
+    //**STATS**
     else if (option == "stats"){
       player.displayStats();
     }
-
+    //**MOVE**
     else if(option == "move"){
+      int dist;
       cout<<"which way>>";
       cin>>option;
-
+      cout<<"how much>>";
+      cin>>dist;
       if(option == "north" || option == "up"){
-        if(world.canEnter( player.getPosX(), (player.getPosY()+1) ) )
-          player.posY += 1;
+        if(world.canEnter( player.getPosX(), (player.getPosY()+dist) ) )
+          player.posY += dist;
       }
 
       else if(option == "east" || option == "right"){
-         if(world.canEnter( (player.getPosX()+1), player.getPosY() ) )
-           player.posX += 1;
+         if(world.canEnter( (player.getPosX()+dist), player.getPosY() ) )
+           player.posX += dist;
       }
 
       else if(option == "south" || option == "down"){
-        if(world.canEnter(player.getPosX(), (player.getPosY()-1) ) )
-          player.posY -= 1;
+        if(world.canEnter(player.getPosX(), (player.getPosY()-dist) ) )
+          player.posY -= dist;
       }
 
       else if(option == "west" || option == "left"){
-        if(world.canEnter( (player.getPosX()-1), player.getPosY() ) )
-           player.posX -= 1;
+        if(world.canEnter( (player.getPosX()-dist), player.getPosY() ) )
+           player.posX -= dist;
       }
-
     }
 
     else if(option == "help" || option =="?"){
@@ -58,8 +61,9 @@ void Turn::run(Chart& world){
 	  <<"";
     }
     else if(option == "map"){
-      player.getPos();
       world.displayWorld();
+      cout<<endl;
+      player.getPos();
     }
     else if(option == "pos"){
       player.getPos();
@@ -80,25 +84,32 @@ void Turn::run(Chart& world){
     else if(option == "target"){
       cout<<"Who >>";
       cin >> option;
-        target.loadUnit(option);
-        cout<<"targeted:"<<endl;
-        target.displayStats();
+      target.loadUnit(option);
+      cout<<"targeted:"<<endl;
+      target.displayStats();
     }
     else if (option == "target-stats"){
        target.displayStats();
-    }
-    else if(option == "move" || option == "walk"){
-
     }
     else if(option == "attack"){
       player.attackUnit(target);
     }
     else if(option =="loot"){
-      target.displayInv();
-      cout<<"choose an item";
+      if(target.getHealth() == 0){
+        target.displayInv();
+        cout<<endl<<"choose an item";
+        cin>>option;
+         if(option!="nothing")
+          player.lootUnit(option,target);
+      }
+      else cout<<"Cannot loot";
+    }
+    else if(option == "give"){
+      player.displayInv();
+      cout<<endl<<"what to give>>";
       cin>>option;
-      if(option!="end")
-        player.lootUnit(option,target);
+      if(option != "nothing")
+      target.lootUnit(option,player);
     }
     else if (option == "distance"){
       cout<<player.distanceTo(target.getPosX(),target.getPosY());
