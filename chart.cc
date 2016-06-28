@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <cmath>
 #include "turn.h"
 #include "unit.h"
 #include "chart.h"
@@ -37,7 +38,7 @@ void Chart::loadWorld(string name){
 	//creates 2D vector of size x,y
 	world.resize(x, vector<container> (y) );
 	//iterates through and sets type
-	x=1,y = 1;
+	x=1;
 	for(row = world.begin(); row < world.end() ; row++){
 		for(col = row->begin(); col< row->end(); col++){
 			//gets type
@@ -50,7 +51,7 @@ void Chart::loadWorld(string name){
 			x++;
 		}
 		x=1;
-		y++;
+		y--;
 	}
 	fin.close();
 	cout<<"Done Loading."<<endl;
@@ -69,6 +70,32 @@ void Chart::displayWorld(){
 			else
 				col->displayType();
 			cout<<' ';
+		}
+		cout<<endl;
+	}
+}
+
+void Chart::displayRange(int centrePosX,int centrePosY, int radius){
+		vector<vector<container> >::iterator row;
+	vector<container>::iterator col;
+	int dist;
+	for(row = world.begin(); row < world.end() ; row++){
+		for(col = row->begin(); col < row->end(); col++){
+  dist = sqrt( ( (col->getPosX() - centrePosX)*(col->getPosX() - centrePosX) )
+    +  ( col->getPosY() - centrePosY)*(col->getPosY() - centrePosY) );
+  		if(dist <= radius){
+  			if(centrePosX == col->getPosX() && centrePosY == col->getPosY())
+  				cout<<"P ";
+  			else{
+					if(col->getGeoType()=='-')
+						cout<<' ';
+					else
+						col->displayType();
+					cout<<' ';
+				}
+			}
+			else
+				cout<<"# ";
 		}
 		cout<<endl;
 	}

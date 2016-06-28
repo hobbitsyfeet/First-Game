@@ -36,6 +36,7 @@ class Chart{
 	void saveWorld(string);
 	bool canEnter(int,int);
 	void searchFor(char, int&, int&);
+	void displayRange(int, int,int);
 	//void playWorld();
 };
 

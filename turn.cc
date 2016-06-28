@@ -34,7 +34,12 @@ void Turn::run(Chart& world){
       cout<<"which way>>";
       cin>>option;
       cout<<"how much>>";
-      cin>>dist;
+
+        cin>>dist;
+        while(typeid(dist) != typeid(int())){
+         cout<<"invalid distance>> ";
+         cin>>dist;
+        }
       if(option == "north" || option == "up"){
         if(world.canEnter( player.getPosX(), (player.getPosY()+dist) ) )
           player.posY += dist;
@@ -54,6 +59,7 @@ void Turn::run(Chart& world){
         if(world.canEnter( (player.getPosX()-dist), player.getPosY() ) )
            player.posX -= dist;
       }
+      world.displayRange(player.getPosX(),player.getPosY(),5);
     }
 
     else if(option == "help" || option =="?"){
@@ -61,8 +67,9 @@ void Turn::run(Chart& world){
 	  <<"";
     }
     else if(option == "map"){
-      world.displayWorld();
-      cout<<endl;
+      //world.displayWorld();
+      //cout<<endl;
+      world.displayRange(player.getPosX(),player.getPosY(),5);
       player.getPos();
     }
     else if(option == "pos"){
