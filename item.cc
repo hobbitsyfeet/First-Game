@@ -86,19 +86,19 @@ void Item::loadItem(string Name){
 bool Item::operator == (const Item& i){
 	if(itemName == i.itemName)
 		return true;
-	else 
+	else
 		return false;
 }
 bool Item::operator <(const Item& i){
 	if(itemName < i.itemName)
 		return true;
-	else 
+	else
 		return false;
 }
 bool Item::operator >(const Item& i){
 	if(itemName > i.itemName)
 		return true;
-	else 
+	else
 		return false;
 }
 

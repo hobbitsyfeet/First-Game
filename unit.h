@@ -34,7 +34,9 @@ private:
 public:
 //CONSTRUCTORS
 				//name,level,health,attack
-	Unit(string="NoName", int=1,int =15,int=15,int=2, int=0,int =1,int=0,int=45, int=0,int=0, int = 6, int =0, int=0);
+	Unit(string="NoName", int=1,int =15,int=15,int=2, int=0,int =1,
+	int=0,int=45, int=0,int=0, int = 6, int =0, int=0,
+	bool=0,bool=0,bool=0,bool=0,bool=0);
 
 //*******Map_Position********
 	int posX;
@@ -74,7 +76,7 @@ public:
 	struct inventory{
   	//main container for inventory
   	vector<Item> invContainer;
-	
+
   	void loadInventory(string);//
   	void saveInventory(string);//
 	  //functions for inventory
@@ -92,6 +94,7 @@ public:
 
 
 //******get Equipment***********
+//need to pass these
 	void unEquipItem(string);
 	void equipItem(string);//
 	bool leftHandEquipped;

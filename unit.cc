@@ -1,6 +1,8 @@
 #include "unit.h"
 #include "item.h"
 #include <cmath>
+//#include <ifstream>
+//#include <ofstream>
 #include <fstream>
 #include <vector>
 #include <algorithm>
@@ -8,7 +10,9 @@
 #include <iomanip>
 using namespace std;
 //default constructor
-Unit::Unit(string Name,int Level, int Health,int MaxHealth,int Attack,int Range,int Defence, int Exp, int MaxExp, int Gold, int Stam, int Dice, int xpos, int ypos){
+Unit::Unit(string Name,int Level, int Health,int MaxHealth,int Attack,int Range,int Defence,
+	int Exp, int MaxExp, int Gold, int Stam, int Dice, int xpos, int ypos,
+bool lEquip, bool rEquip, bool hEquip, bool legEquip, bool ftEquip){
   name=Name;
   level = Level;
 
@@ -28,6 +32,13 @@ Unit::Unit(string Name,int Level, int Health,int MaxHealth,int Attack,int Range,
 
   posX = xpos;
   posY = ypos;
+
+//need to pass in or else will always spawn with empty items, thus will enable equiping multiple items.
+	leftHandEquipped = lEquip;
+	rightHandEquipped =rEquip;
+	headEquipped =hEquip;
+	legsEquipped =legEquip;
+	feetEquipped =ftEquip;
 
 }
 
@@ -122,17 +133,21 @@ void Unit::attackUnit(Unit& target){
 
   //if in range, engage
   if(this->getRange() >= distanceTo( target.getPosX(),target.getPosY() ) ){
+		cout<<"inrange"<<endl;
     //if not dead, attack
     if(target.getHealth() > totalDamage){
+			cout<<"target not dead"<<endl;
       if(inv.searchWeaponEquipped()){
         //getEquipped Weapon
         equipmentUsed = &inv.getItemEquipped();
+				cout<<"i got a weapon"<<endl;
         //if weapon's durability
         if(equipmentUsed->itemGetDurability() > 0){
         //if the total damage is positive
+				cout<<"my damage is greater than his defence"<<endl;
          if(totalDamage > 0){
           //do damage
-
+					cout<<"target hit!"<<endl;
               target.health -= totalDamage;
               equipmentUsed->decrementDurability();
           //decrement item's durability
@@ -160,6 +175,7 @@ void Unit::attackUnit(Unit& target){
     //they are dead, announce and do no action
     else{
       if(target.getHealth() != 0){
+				target.saveUnit(target.getName());
         target.health = 0;
         experience += target.getExp();
         cout<<"you killed "<<target.getName()<<" and gained"<<target.getExp()<<" experience."<<endl;
@@ -187,7 +203,8 @@ void Unit::lootUnit(string iName,Unit& target){
   for(it=target.inv.invContainer.begin();it<target.inv.invContainer.end();it++){
       if(iName == it->itemGetName()){
        it->itemUnequip();
-       inv.pickUp(*it);
+			 this->unEquipItem(iName);
+			 inv.pickUp(*it);
        target.inv.invContainer.erase(it);
       }
     }
@@ -215,7 +232,7 @@ int Unit::distanceTo(const int targetX, const int targetY){
   //because distance cannot be negative
   if(dist< 0)
     return -(dist);
-  else 
+  else
     return dist;
 }
 
@@ -233,11 +250,14 @@ void Unit::getPos(){
 //applies stats to unit and
 //applies boolean 'equipped' according to item type
 void Unit::equipItem(string i){
-  
+	cout<<"entering equipitem"<<endl;
+	cout<<"searching for "<<i<<endl;
   vector<Item>::iterator it;
   bool didEquip=false;
-  for(it=inv.invContainer.begin(); it< inv.invContainer.end() || it->itemGetName() == i; it++){
-    
+int j=1;
+  for(it=inv.invContainer.begin(); it< inv.invContainer.end() /*|| it->itemGetName() == i*/; it++){
+		cout<<it->itemGetName()<<it->itemGetType()<<endl;
+		cout<<leftHandEquipped<<rightHandEquipped<<endl;
     if(it->itemGetName() == i){
       if(it->itemGetType() == "Right-Hand" && rightHandEquipped == false){
 	rightHandEquipped = true;
@@ -268,7 +288,7 @@ void Unit::equipItem(string i){
 	feetEquipped = true;
 	didEquip = true;
       }
-      
+			cout<<"preforming changes"<<endl;
       if(didEquip == true){
         cout<<i<<" equipped";
 	      attack += it->itemGetDamage();
@@ -289,14 +309,14 @@ void Unit::equipItem(string i){
 void Unit::unEquipItem(string i){
   vector<Item>::iterator it;
   bool didEquip = false;
-  for(it=inv.invContainer.begin(); it< inv.invContainer.end() || it->itemGetName() == i; it++){
+  for(it=inv.invContainer.begin(); it< inv.invContainer.end(); it++){
     if(it->itemGetName() == i){
       if(it->itemGetType() == "Right-Hand" && rightHandEquipped == true){
 	rightHandEquipped = false;
 	didEquip = true;
       }
-      else if(it->itemGetType() == "Left-Hand" && rightHandEquipped == true){
-	rightHandEquipped = false;
+      else if(it->itemGetType() == "Left-Hand" && leftHandEquipped == true){
+	leftHandEquipped = false;
 	didEquip = true;
       }
       else if(it->itemGetType() == "Two-Hands" && rightHandEquipped == true && leftHandEquipped == true){
@@ -341,11 +361,12 @@ void Unit::unEquipItem(string i){
 //receives unit information from external FILE
 void Unit::loadUnit(string file){
   ifstream fin;
-  fin.open("./saves/" + file);
+	string temp ="./saves/" + file;
+  fin.open(temp.c_str());
   while(fin.fail()){
     cout<<"invalid player, enter a name>> ";
     cin>>file;
-    fin.open("./saves/" + file);
+    fin.open(("./saves/" + file).c_str());
   }
   fin>>*this;
   fin.close();
@@ -358,7 +379,7 @@ void Unit::loadUnit(string file){
 void Unit::saveUnit(string file){
   this->name = file;
   ofstream fout;
-  fout.open("./saves/" + file);
+  fout.open(("./saves/" + file).c_str());
   fout<<*this;
   fout.close();
   inv.saveInventory(file);
@@ -432,7 +453,7 @@ void Unit::inventory::saveInventory(string unitName){
   vector<Item>::iterator it;
   ofstream fout;
   //open file at destination
-  fout.open("./saves/" + unitName +"Inv");
+  fout.open(("./saves/" + unitName +"Inv").c_str());
   for(it=invContainer.begin(); it< invContainer.end(); it++){
     if(it+1 != invContainer.end())
       fout<<*it<<endl;
@@ -449,7 +470,7 @@ void Unit::inventory::saveInventory(string unitName){
 void Unit::inventory::loadInventory(string unitName){
   Item temp;
   ifstream fin;
-  fin.open("./saves/" + unitName +"Inv");
+  fin.open(("./saves/" + unitName +"Inv").c_str());
   //for each item in file get stats and overwrite temp
   while(!fin.eof()){
     fin>>temp;
@@ -502,4 +523,3 @@ Item& Unit::inventory::getItemEquipped(){
   }
   return temp;
 }
-

@@ -1,6 +1,8 @@
 
 #include <vector>
-#include <fstream>
+#include<fstream>
+//#include <ifstream>
+//#include <ofstream>
 #include <iostream>
 #include <cmath>
 #include "turn.h"
@@ -26,11 +28,11 @@ void Chart::loadWorld(string name){
 	//this->worldName = name;
 
 	ifstream fin;
-	fin.open("./maps/" + name + ".txt");
+	fin.open(("./maps/" + name + ".txt").c_str());
 	while(fin.fail()){
 		cout<<"invalid file, enter a file>> ";
 		cin>>name;
-		fin.open("./maps/" + name + ".txt");
+		fin.open(("./maps/" + name + ".txt").c_str());
 	}
 		cout<<"Loading map..."<<endl;
 	this->worldName = name;
@@ -44,6 +46,11 @@ void Chart::loadWorld(string name){
 			//gets type
 			fin.ignore();
 			fin>>block.geoType;
+			if(block.checkAvailable()==true)
+				block.occupied=false;
+			else
+				block.occupied=true;
+
 			block.posX = x;
 			block.posY = y;
 			*col= block;
@@ -69,7 +76,7 @@ void Chart::displayWorld(){
 				cout<<' ';
 			else
 				col->displayType();
-			cout<<' ';
+			cout<<col->getOccupance();
 		}
 		cout<<endl;
 	}
@@ -103,28 +110,31 @@ void Chart::displayRange(int centrePosX,int centrePosY, int radius){
 
 bool Chart::canEnter(int x, int y){
 	int i=1,j=1;
+	//cout<<"starting canEnter";
 	vector<vector <container> >::iterator row;
 	vector<container> ::iterator col;
-	for(row = world.begin(); row < world.end() || j==x; row++){
-		for(col = row->begin(); col< row->end()|| i==y; col++){
-
+	for(row = world.begin(); row < world.end(); row++){
+		for(col = row->begin(); col< row->end() ; col++){
+			//cout<<i<<','<<j<<endl;
+			//cout<<col->getOccupance()<<endl;
 			if(i==x && j==y){
-				//cout<<"found";			cout<<i<<','<<j<<endl;
 				if(col->getOccupance() == false){
+					cout<<"testing occupance";
 					if(col->getGeoType() == 'O')
 						col->geoType = '-';
 					return true;
 				}
 			}
-			i++;
+			j++;
 		}
-		i=1;
-		j++;
+		j=1;
+		i--;
 	}
 	return false;
 }
+
 void Chart::searchFor(char spawnPt, int& x, int&y){
-	x=1,y=1;
+	/*x=1,y=1;
 	vector<vector <container> >::iterator row;
 	vector<container> ::iterator col;
 	for(row = world.begin(); row < world.end(); row++){
@@ -132,13 +142,11 @@ void Chart::searchFor(char spawnPt, int& x, int&y){
 			if(spawnPt == col->getGeoType()){
 				return;
 			}
-			y++;
-			//cout<<x<<','<<y<<endl;
+			x++;
 		}
-		y=1;
-		x++;
-
-	}
+		x=1;
+		y--;
+	}*/
 }
 
 void Chart::container::displayType(){
@@ -159,10 +167,10 @@ int Chart::container::getPosY(){
 }
 bool Chart::container::checkAvailable(){
 	//if not occupied check if terrain is accessible
-	if(this->getOccupance() == false)
+	//if(this->getOccupance() == false)
 		switch(this->getGeoType()){
 			case'!':
-			case'@':
+			//case'@':
 			case'$':
 			case'%':
 			case'^':
@@ -170,10 +178,12 @@ bool Chart::container::checkAvailable(){
 			case'*':
 			case'~':
 			case'#':
+			case'|':
+			case'_':
 			return false;
 				break;
-			default:	
+			default:
 				return true;
 		}
-		else return false;
+		//else return false;
 }
