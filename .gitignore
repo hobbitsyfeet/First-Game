@@ -6,3 +6,5 @@
 *.~
 
 saves/enemies/justin
+
+*.cc~

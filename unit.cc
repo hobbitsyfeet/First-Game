@@ -1,30 +1,51 @@
 #include "unit.h"
 #include "item.h"
 #include <cmath>
+//#include <ifstream>
+//#include <ofstream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 using namespace std;
 //default constructor
-Unit::Unit(string Name,int Level, int Health,int Attack,int Range,int Defence, int Exp, int Gold, int Stam, int Dice, int xpos, int ypos){
+Unit::Unit(string Name,int Level, int Health,int MaxHealth,int Attack,int Range,int Defence,
+	int Exp, int MaxExp, int Gold, int Stam, int Dice, int xpos, int ypos,
+bool lEquip, bool rEquip, bool hEquip, bool legEquip, bool ftEquip){
   name=Name;
   level = Level;
+
   health=Health;
+  maxHealth=MaxHealth;
+
   attack=Attack;
   range=Range;
   defence=Defence;
+
   gold=Gold;
+
   experience=Exp;
+  maxExperience = MaxExp;
   stamina = Stam;
   dice = Dice;
 
   posX = xpos;
   posY = ypos;
 
+//need to pass in or else will always spawn with empty items, thus will enable equiping multiple items.
+	leftHandEquipped = lEquip;
+	rightHandEquipped =rEquip;
+	headEquipped =hEquip;
+	legsEquipped =legEquip;
+	feetEquipped =ftEquip;
+
 }
 
 //*******STATS*********
+  int rollDice(int dice){
+    return (rand() % dice) +1;
+  }
 
 //Functions:Getters
 //returns individually values of stats
@@ -33,6 +54,9 @@ string Unit::getName()const{
 }
 int Unit::getLevel()const{
 	return level;
+}
+int Unit::getMaxHealth()const{
+  return maxHealth;
 }
 int Unit::getHealth()const{
   return health;
@@ -52,6 +76,9 @@ int Unit::getDefence()const{
 int Unit::getGold()const{
   return gold;
 }
+int Unit::getMaxExp()const{
+  return ( ((level)*(level)) + (22*(level)) +(22) );
+}
 int Unit::getExp()const{
   return experience;
 }
@@ -62,14 +89,37 @@ int Unit:: getPosX(){
 	return posX;
 }
 
+void Unit::levelUp(){
+  if(experience >= maxExperience){
+    //increases level
+    level++;
+    //resets exp starting from 0+excess experience
+    experience -= maxExperience;
+    //increase maxExperience with equation y=(x^2)+(22x)+22
+    maxExperience = ( ((level)*(level)) + (22*(level)) +(22) );
+
+    maxHealth++;
+    if(level %3 ==0){
+      maxHealth++;
+    }
+    if(level%5 == 0){
+      maxHealth++;
+    }
+    if(level%10 == 0){
+      attack++;
+      defence++;
+      dice++;
+    }
+  }
+}
 //Function:displayStats
 //prints out status of Unit in an in-line order
 void Unit::displayStats(){
   cout<<"==============STATS=============="<<endl;
   cout<<setfill(' ');
-  cout<<"NAME:"<<name<<endl;
-  cout<<"Health:"<<left<<setw(10)<<health<<"Experience:"<<experience<<endl;
-  cout<<"Attack:"<<left<<setw(10)<<attack<<"Defence:"<<defence<<endl;
+  cout<<"NAME:"<<name<<" x:"<<posX<<" y:"<< posY<<endl;
+  cout<<"Health:"<<health<<'/'<<left<<setw(14)<<maxHealth<<"Experience:"<<experience<<endl;
+  cout<<"Attack:"<<left<<setw(17)<<attack<<"Defence:"<<defence<<endl;
   cout<<setfill('=')<<setw(35)<<"==";
 }
 
@@ -83,17 +133,21 @@ void Unit::attackUnit(Unit& target){
 
   //if in range, engage
   if(this->getRange() >= distanceTo( target.getPosX(),target.getPosY() ) ){
+		cout<<"inrange"<<endl;
     //if not dead, attack
     if(target.getHealth() > totalDamage){
+			cout<<"target not dead"<<endl;
       if(inv.searchWeaponEquipped()){
         //getEquipped Weapon
         equipmentUsed = &inv.getItemEquipped();
+				cout<<"i got a weapon"<<endl;
         //if weapon's durability
         if(equipmentUsed->itemGetDurability() > 0){
         //if the total damage is positive
+				cout<<"my damage is greater than his defence"<<endl;
          if(totalDamage > 0){
           //do damage
-
+					cout<<"target hit!"<<endl;
               target.health -= totalDamage;
               equipmentUsed->decrementDurability();
           //decrement item's durability
@@ -106,7 +160,7 @@ void Unit::attackUnit(Unit& target){
         //the item is broken
         else{
           totalDamage = 1;
-          cout<<equipmentUsed->itemGetName()<<" is broken!"<<endl;
+          cout<<equipmentUsed->itemGetName()<<" is broken! "<<endl;
           target.health -= totalDamage;
        }
          //show results
@@ -120,12 +174,50 @@ void Unit::attackUnit(Unit& target){
 
     //they are dead, announce and do no action
     else{
-     target.health = 0;
-     cout<<target.getName()<<" is dead"<<endl;
+      if(target.getHealth() != 0){
+				target.saveUnit(target.getName());
+        target.health = 0;
+        experience += target.getExp();
+        cout<<"you killed "<<target.getName()<<" and gained"<<target.getExp()<<" experience."<<endl;
+        if(experience >= maxExperience)
+          this->levelUp();
+      }
+      else
+        cout<<target.getName()<<" is dead";
     }
   }
   else{
     cout<<"Not in range";
+  }
+}
+
+//Function:lootUnit
+//will access another unit's inventory
+void Unit::lootUnit(string iName,Unit& target){
+  if(iName == "Fists"){
+    cout<<"You cannot yet remove hands";
+    return;
+  }
+  if(distanceTo(target.getPosX(),target.getPosY() ) <= 1){
+  vector<Item>::iterator it;
+  for(it=target.inv.invContainer.begin();it<target.inv.invContainer.end();it++){
+      if(iName == it->itemGetName()){
+       it->itemUnequip();
+			 this->unEquipItem(iName);
+			 inv.pickUp(*it);
+       target.inv.invContainer.erase(it);
+      }
+    }
+    cout<<"You grabbed "<<iName;
+  }
+  else{
+    cout<<"Cannot loot"<<target.getName();
+    if(distanceTo(target.getPosX(),target.getPosY() ) > 1 ){
+      if(target.getHealth() > 0)
+        cout<<" is still alive, cannot grab his things just yet!";
+      else
+        cout<<" is too far";
+    }
   }
 }
 
@@ -135,11 +227,12 @@ void Unit::attackUnit(Unit& target){
 int Unit::distanceTo(const int targetX, const int targetY){
   int dist;
   //distance between 2 points
-  dist = sqrt((targetX - this->getPosX()) + targetY - this->getPosY());
+  dist = sqrt( ( (targetX - this->getPosX())*(targetX - this->getPosX()) )
+    +  ( targetY - this->getPosY())*(targetY - this->getPosY()) );
   //because distance cannot be negative
   if(dist< 0)
     return -(dist);
-  else 
+  else
     return dist;
 }
 
@@ -157,11 +250,14 @@ void Unit::getPos(){
 //applies stats to unit and
 //applies boolean 'equipped' according to item type
 void Unit::equipItem(string i){
-  
+	cout<<"entering equipitem"<<endl;
+	cout<<"searching for "<<i<<endl;
   vector<Item>::iterator it;
   bool didEquip=false;
-  for(it=inv.invContainer.begin(); it< inv.invContainer.end() || it->itemGetName() == i; it++){
-    
+int j=1;
+  for(it=inv.invContainer.begin(); it< inv.invContainer.end() /*|| it->itemGetName() == i*/; it++){
+		cout<<it->itemGetName()<<it->itemGetType()<<endl;
+		cout<<leftHandEquipped<<rightHandEquipped<<endl;
     if(it->itemGetName() == i){
       if(it->itemGetType() == "Right-Hand" && rightHandEquipped == false){
 	rightHandEquipped = true;
@@ -192,13 +288,14 @@ void Unit::equipItem(string i){
 	feetEquipped = true;
 	didEquip = true;
       }
-      
+			cout<<"preforming changes"<<endl;
       if(didEquip == true){
-        cout<<i<<" equipped"<<endl;
+        cout<<i<<" equipped";
 	      attack += it->itemGetDamage();
       	range += it->itemGetRange();
         defence += it->itemGetDefence();
         it->itemEquip();
+        break;
       }
     }
   }
@@ -212,14 +309,14 @@ void Unit::equipItem(string i){
 void Unit::unEquipItem(string i){
   vector<Item>::iterator it;
   bool didEquip = false;
-  for(it=inv.invContainer.begin(); it< inv.invContainer.end() || it->itemGetName() == i; it++){
+  for(it=inv.invContainer.begin(); it< inv.invContainer.end(); it++){
     if(it->itemGetName() == i){
       if(it->itemGetType() == "Right-Hand" && rightHandEquipped == true){
 	rightHandEquipped = false;
 	didEquip = true;
       }
-      else if(it->itemGetType() == "Left-Hand" && rightHandEquipped == true){
-	rightHandEquipped = false;
+      else if(it->itemGetType() == "Left-Hand" && leftHandEquipped == true){
+	leftHandEquipped = false;
 	didEquip = true;
       }
       else if(it->itemGetType() == "Two-Hands" && rightHandEquipped == true && leftHandEquipped == true){
@@ -244,14 +341,15 @@ void Unit::unEquipItem(string i){
 	didEquip = true;
       }
       if(didEquip == true){
-	cout<<i<<" un-equipped"<<endl;
+	cout<<i<<" un-equipped";
 	attack -= it->itemGetDamage();
   range -= it->itemGetRange();
 	defence -= it->itemGetDefence();
 	it->itemUnequip();
+  break;
       }
       else
-	cout<<"Could not un-equip "<<i<<endl;
+	cout<<"Could not un-equip "<<i;
     }
   }
 }
@@ -263,11 +361,12 @@ void Unit::unEquipItem(string i){
 //receives unit information from external FILE
 void Unit::loadUnit(string file){
   ifstream fin;
-  fin.open("./saves/" + file);
+	string temp ="./saves/" + file;
+  fin.open(temp.c_str());
   while(fin.fail()){
     cout<<"invalid player, enter a name>> ";
     cin>>file;
-    fin.open("./saves/" + file);
+    fin.open(("./saves/" + file).c_str());
   }
   fin>>*this;
   fin.close();
@@ -280,7 +379,7 @@ void Unit::loadUnit(string file){
 void Unit::saveUnit(string file){
   this->name = file;
   ofstream fout;
-  fout.open("./saves/" + file);
+  fout.open(("./saves/" + file).c_str());
   fout<<*this;
   fout.close();
   inv.saveInventory(file);
@@ -293,24 +392,27 @@ void Unit::saveUnit(string file){
 Unit& Unit::operator = (const Unit& i){
   name = i.name;
   health = i.health;
+  maxHealth = i.maxHealth;
   stamina = i.stamina;
   attack = i.attack;
   defence = i.defence;
   gold = i.gold;
   experience = i.experience;
+  maxExperience = i.maxExperience;
+  dice = i.dice;
   return *this;
 }
 
 //IO operators
 ostream& operator << (ostream& oStr, const Unit& i){
-  oStr<<i.name<<' '<<i.level<<' '<<i.health<<' '<<i.stamina<<' '<<i.attack<<' '<<i.range<<' '<<i.defence<<' '<<i.gold<<' '<<i.experience<<' '<<i.dice<<' ';
+  oStr<<i.name<<' '<<i.level<<' '<<i.health<<' '<<i.maxHealth<<' '<<i.stamina<<' '<<i.attack<<' '<<i.range<<' '<<i.defence<<' '<<i.gold<<' '<<i.experience<<' '<<i.maxExperience<<' '<<i.dice<<' ';
   oStr<<i.leftHandEquipped<<' '<<i.rightHandEquipped<<' '<<i.headEquipped<<' '<<i.torsoEquipped<<' '<<i.legsEquipped<<' '<<i.feetEquipped<<' ';
   oStr<<i.posX<<' '<<i.posY<<' ';
   return oStr;
 }
 
 istream& operator >> (istream& iStr, Unit& i){
-  iStr>>i.name>>i.level>>i.health>>i.stamina>>i.attack>>i.range>>i.defence>>i.gold>>i.experience>>i.dice;
+  iStr>>i.name>>i.level>>i.health>>i.maxHealth>>i.stamina>>i.attack>>i.range>>i.defence>>i.gold>>i.experience>>i.maxExperience>>i.dice;
   iStr>>i.leftHandEquipped>>i.rightHandEquipped>>i.headEquipped>>i.torsoEquipped>>i.legsEquipped>>i.feetEquipped;
   iStr>>i.posX>>i.posY;
   return iStr;
@@ -336,7 +438,7 @@ void Unit::displayInv(){
 
 //NOT DONE
 void Unit::inventory::pickUp(Item a){
-  invContainer.push_back(a);
+    invContainer.push_back(a);
 }
 //NOT DONE
 void Unit::inventory::dropItem(Item a){
@@ -351,7 +453,7 @@ void Unit::inventory::saveInventory(string unitName){
   vector<Item>::iterator it;
   ofstream fout;
   //open file at destination
-  fout.open("./saves/" + unitName +"Inv");
+  fout.open(("./saves/" + unitName +"Inv").c_str());
   for(it=invContainer.begin(); it< invContainer.end(); it++){
     if(it+1 != invContainer.end())
       fout<<*it<<endl;
@@ -366,30 +468,12 @@ void Unit::inventory::saveInventory(string unitName){
 //creates an item with those stats
 //pushes it into Unit's inventory
 void Unit::inventory::loadInventory(string unitName){
-  
-  //assigns default stats for if inventory is empty or new
-  /*
-  string iName = "Pebble";
-  string iType = "Right-Hand";
-  int ran = 1;
-  int dam = 1;
-  int def = 0;
-  int val = 1;
-  int dur = 20;
-  bool eq = 0;
-  */
   Item temp;
   ifstream fin;
-  fin.open("./saves/" + unitName +"Inv");
-  
-  //for each item in file get stats and overwrite old ones
+  fin.open(("./saves/" + unitName +"Inv").c_str());
+  //for each item in file get stats and overwrite temp
   while(!fin.eof()){
     fin>>temp;
-    /*
-    fin>>iName>>iType>>ran>>dam>>def>>val>>dur>>eq;
-    //create temp item with stats
-    Item temp(iName, iType, dam, def,val,dur,eq);
-    */
     //push into inventory
     pickUp(temp);
   }
@@ -439,4 +523,3 @@ Item& Unit::inventory::getItemEquipped(){
   }
   return temp;
 }
-
