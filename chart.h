@@ -28,7 +28,7 @@ class Chart{
 			string link;
 	};
 	//2D vector
-	vector< vector<container> > world; 
+	vector< vector<container> > world;
 	string worldName;
 	public:
 
@@ -39,6 +39,9 @@ class Chart{
 	bool canEnter(int,int);
 	void searchFor(char, int&, int&);
 	void displayRange(int, int,int);
+
+	void isPortal(int,int);
+	void findPath(int,int,int,int);
 	//void playWorld();
 };
 

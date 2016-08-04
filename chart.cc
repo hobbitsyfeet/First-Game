@@ -22,6 +22,7 @@ void Chart::loadWorld(string name){
 	container block, block_reset;
 	char inChar;
 	int x, y;
+	int posXPortal = -1,posYPortal = -1,numPortal;
 	string option ="";
 	//END OF INITIALIZATION;
 	//set name of loaded world
@@ -39,6 +40,14 @@ void Chart::loadWorld(string name){
 	fin>>x>>y;
 	//creates 2D vector of size x,y
 	world.resize(x, vector<container> (y) );
+
+	//number or portals in a map
+	option="";
+	fin>>numPortal;
+	for(int i = 0; i<numPortal; i++){
+		fin>>posXPortal>>posYPortal>>option;
+	}
+	cout<<posXPortal<<posYPortal<<endl;
 	//iterates through and sets type
 	x=1;
 	for(row = world.begin(); row < world.end() ; row++){
@@ -47,10 +56,17 @@ void Chart::loadWorld(string name){
 			fin.ignore();
 			fin>>block.geoType;
 			if(block.checkAvailable()==true)
-				block.occupied=false;
+			block.occupied=false;
 			else
-				block.occupied=true;
+			block.occupied=true;
 
+			if( (posXPortal == x) && (posYPortal == y) ){
+				block.link = option;
+				cout<<"!";
+			}
+			else{
+				block.link = "";
+			}
 			block.posX = x;
 			block.posY = y;
 			*col= block;
@@ -76,7 +92,8 @@ void Chart::displayWorld(){
 				cout<<' ';
 			else
 				col->displayType();
-			cout<<col->getOccupance();
+		//cout<<col->getOccupance();
+			cout<<col->getLink();
 		}
 		cout<<endl;
 	}
@@ -147,6 +164,23 @@ void Chart::searchFor(char spawnPt, int& x, int&y){
 	}
 }
 
+void Chart::findPath(int initX,int initY, int finX, int finY){
+	//initialize
+	vector<vector <container> >::iterator row = world.end()-initY;
+	vector<container> ::iterator col = row->begin()+initX-1;
+}
+
+void Chart::isPortal(int x,int y){
+	cout<<"starting portal search"<<endl;
+	vector<vector <container> >::iterator row = world.end()-y;
+	vector<container> ::iterator col = row->begin()+x-1;
+	cout<<col->getPosX()<<col->getPosY()<<col->getLink();
+	if(col->getLink() != ""){
+		this->loadWorld(col->getLink().c_str());
+		cout<<"going to"<< col->getLink();
+	}
+}
+
 void Chart::container::displayType(){
 	cout<<geoType;
 }
@@ -162,6 +196,9 @@ int Chart::container::getPosX(){
 }
 int Chart::container::getPosY(){
 	return posY;
+}
+string Chart::container::getLink(){
+	return link;
 }
 bool Chart::container::checkAvailable(){
 	//if not occupied check if terrain is accessible

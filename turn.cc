@@ -30,6 +30,13 @@ void Turn::run(Chart& world){
     if(option == "inv"){
       player.displayInv();
     }
+		////////*****************************////////////
+		//TESTING//
+		////////****************************/////////////
+		else if(option == "path"){
+			cout<<"entering path";
+			world.findPath(player.getPosX(),player.getPosY(),15,15);
+		}
     //**STATS**
     else if (option == "stats"){
       player.displayStats();
@@ -61,6 +68,9 @@ void Turn::run(Chart& world){
 				//if(world.canEnter( (player.getPosX()-dist), player.getPosY() ) )
 				player.posX -= dist;
 			}
+
+			world.isPortal(player.getPosX(),player.getPosY());
+
 			world.displayRange(player.getPosX(),player.getPosY(),5);
 		}
 
