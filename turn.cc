@@ -5,13 +5,14 @@
 #include <iomanip>
 using namespace std;
 
+//UPDATE//
 void Turn::run(Chart& world){
   string option;
 	string pname;
   int x,y;
   //load info
   getPlayer();
-  //world.searchFor('O',player.posX,player.posY);
+  world.searchFor('O',player.posX,player.posY);
   cout<<"Loaded:"<<player.getName();
 	pname = player.getName();
 

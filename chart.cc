@@ -134,19 +134,17 @@ bool Chart::canEnter(int x, int y){
 }
 
 void Chart::searchFor(char spawnPt, int& x, int&y){
-	/*x=1,y=1;
 	vector<vector <container> >::iterator row;
 	vector<container> ::iterator col;
 	for(row = world.begin(); row < world.end(); row++){
 		for(col = row->begin(); col< row->end(); col++){
 			if(spawnPt == col->getGeoType()){
+				x = col->getPosX();
+				y = col->getPosY();
 				return;
 			}
-			x++;
 		}
-		x=1;
-		y--;
-	}*/
+	}
 }
 
 void Chart::container::displayType(){

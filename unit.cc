@@ -453,6 +453,7 @@ void Unit::inventory::saveInventory(string unitName){
   vector<Item>::iterator it;
   ofstream fout;
   //open file at destination
+	remove(("./saves/" + unitName +"Inv").c_str());
   fout.open(("./saves/" + unitName +"Inv").c_str());
   for(it=invContainer.begin(); it< invContainer.end(); it++){
     if(it+1 != invContainer.end())
