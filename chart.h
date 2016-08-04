@@ -20,10 +20,12 @@ class Chart{
 			void displayType();
 			int getPosX();
 			int getPosY();
+			string getLink();
 		private:
 			int posX, posY;
 			bool occupied;
 			char geoType;
+			string link;
 	};
 	//2D vector
 	vector< vector<container> > world; 
@@ -36,6 +38,7 @@ class Chart{
 	void saveWorld(string);
 	bool canEnter(int,int);
 	void searchFor(char, int&, int&);
+	void displayRange(int, int,int);
 	//void playWorld();
 };
 

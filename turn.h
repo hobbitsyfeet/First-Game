@@ -11,9 +11,12 @@ class Turn{
   void run(Chart&);
  private:
 	void attackTarget();
+	void lootTarget();
 	Unit getPlayer();
  	Unit player;
-  	Unit target;
+ 	//Not pointer because Unit will not be Loaded during turn.
+ 	//only access and modify stats saved in file, then loaded up for next unit.
+  Unit target;
 };
 
 

@@ -35,6 +35,8 @@ public:
 
 	//operators
 	bool operator == (const Item&);
+	bool operator < (const Item&);
+	bool operator > (const Item&);
 	Item& operator = (const Item&);
 
 	//friends
