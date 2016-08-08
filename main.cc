@@ -18,11 +18,11 @@ int main(){
   Chart worlds;
   Turn player;
 
-  string option;
-  cout<<"what world?>>";
-  cin>>option;
-  worlds.loadWorld(option);
-  worlds.displayWorld();
+ // string option;
+ // cout<<"what world?>>";
+  //cin>>option;
+ // worlds.loadWorld(player.getWorld());
+ // worlds.displayWorld();
   player.run(worlds);
   //worlds.playWorld();
   //worlds.displayWorld();

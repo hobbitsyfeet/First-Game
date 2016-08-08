@@ -177,36 +177,12 @@ void Chart::displayRange(int centrePosX,int centrePosY, int radius){
 bool Chart::canEnter(int x, int y){
 	vector<vector <container> >::iterator row = world.end()-y;
 	vector<container> ::iterator col = row->begin()+x-1;
-	cout<<col->getPosX()<<','<<col->getPosY()<<endl;
+	//cout<<col->getPosX()<<','<<col->getPosY()<<endl;
 	if(col->getOccupance() == false){
-		cout<<"allowed to enter"<<endl;
+		//cout<<"allowed to enter"<<endl;
 		return false;
 	}
 	else return true;
-	/*
-	int i=1,j=1;
-	//cout<<"starting canEnter";
-	vector<vector <container> >::iterator row;
-	vector<container> ::iterator col;
-	for(row = world.begin(); row < world.end(); row++){
-		for(col = row->begin(); col< row->end() ; col++){
-			//cout<<i<<','<<j<<endl;
-			//cout<<col->getOccupance()<<endl;
-			if(i==x && j==y){
-				if(col->getOccupance() == false){
-					cout<<"testing occupance";
-					if(col->getGeoType() == 'O')
-						col->geoType = '-';
-					return true;
-				}
-			}
-			j++;
-		}
-		j=1;
-		i--;
-	}
-	return false;
-	*/
 }
 
 void Chart::setSpawn(char spawnPt, int& x, int&y){
@@ -230,17 +206,23 @@ void Chart::findPath(int initX,int initY, int finX, int finY){
 }
 
 void Chart::isPortal(int x,int y,bool& gotLink){
-	cout<<"starting portal search"<<endl;
+	//cout<<"starting portal search"<<endl;
 	vector<vector <container> >::iterator row = world.end()-y;
 	vector<container> ::iterator col = row->begin()+x-1;
-	cout<<col->getPosX()<<col->getPosY()<<col->getLink();
+	//cout<<col->getPosX()<<col->getPosY()<<col->getLink();
 	if(col->getLink() != ""){
 		gotLink = true;
 		this->loadWorld(col->getLink().c_str());
-		cout<<"going to"<< col->getLink();
+		cout<<"going to"<< col->getLink()<<endl;
 	}
 }
 
+string Chart::getChartName()const{
+	return worldName;
+}
+void Chart::setChartName(string input){
+	worldName = input;
+}
 bool Chart::getFogOfWar(){
 	return fogOfWar;
 }
@@ -269,6 +251,7 @@ bool Chart::container::checkAvailable(){
 	//if(this->getOccupance() == false)
 		switch(this->getGeoType()){
 			case'!':
+			case'=':
 			//case'@':
 			case'$':
 			case'%':
@@ -279,6 +262,7 @@ bool Chart::container::checkAvailable(){
 			case'#':
 			case'|':
 			case'_':
+			case'/':
 			return false;
 				break;
 			default:

@@ -12,7 +12,8 @@ using namespace std;
 //default constructor
 Unit::Unit(string Name,int Level, int Health,int MaxHealth,int Attack,int Range,int Defence,
 	int Exp, int MaxExp, int Gold, int Stam, int Dice, int xpos, int ypos,
-bool lEquip, bool rEquip, bool hEquip, bool legEquip, bool ftEquip){
+bool lEquip, bool rEquip, bool hEquip, bool legEquip, bool ftEquip,
+string cWorld){
   name=Name;
   level = Level;
 
@@ -32,6 +33,8 @@ bool lEquip, bool rEquip, bool hEquip, bool legEquip, bool ftEquip){
 
   posX = xpos;
   posY = ypos;
+
+  currentWorld = cWorld;
 
 //need to pass in or else will always spawn with empty items, thus will enable equiping multiple items.
 	leftHandEquipped = lEquip;
@@ -89,6 +92,13 @@ int Unit:: getPosX(){
 	return posX;
 }
 
+string Unit::getCurrentWorld()const{
+  return currentWorld;
+}
+
+void Unit::setCurrentWorld(string input){
+  currentWorld = input;
+}
 void Unit::levelUp(){
   if(experience >= maxExperience){
     //increases level
@@ -383,6 +393,7 @@ void Unit::saveUnit(string file){
   fout<<*this;
   fout.close();
   inv.saveInventory(file);
+  cout<<"unit saved";
 }
 
 
@@ -400,6 +411,7 @@ Unit& Unit::operator = (const Unit& i){
   experience = i.experience;
   maxExperience = i.maxExperience;
   dice = i.dice;
+  currentWorld = i.currentWorld;
   return *this;
 }
 
@@ -408,6 +420,7 @@ ostream& operator << (ostream& oStr, const Unit& i){
   oStr<<i.name<<' '<<i.level<<' '<<i.health<<' '<<i.maxHealth<<' '<<i.stamina<<' '<<i.attack<<' '<<i.range<<' '<<i.defence<<' '<<i.gold<<' '<<i.experience<<' '<<i.maxExperience<<' '<<i.dice<<' ';
   oStr<<i.leftHandEquipped<<' '<<i.rightHandEquipped<<' '<<i.headEquipped<<' '<<i.torsoEquipped<<' '<<i.legsEquipped<<' '<<i.feetEquipped<<' ';
   oStr<<i.posX<<' '<<i.posY<<' ';
+  oStr<<i.currentWorld;
   return oStr;
 }
 
@@ -415,6 +428,7 @@ istream& operator >> (istream& iStr, Unit& i){
   iStr>>i.name>>i.level>>i.health>>i.maxHealth>>i.stamina>>i.attack>>i.range>>i.defence>>i.gold>>i.experience>>i.maxExperience>>i.dice;
   iStr>>i.leftHandEquipped>>i.rightHandEquipped>>i.headEquipped>>i.torsoEquipped>>i.legsEquipped>>i.feetEquipped;
   iStr>>i.posX>>i.posY;
+  iStr>>i.currentWorld;
   return iStr;
 }
 //************************************************************************

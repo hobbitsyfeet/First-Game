@@ -12,6 +12,7 @@ class Turn{
  private:
 	void attackTarget();
 	void lootTarget();
+	//void movePlayer();
 	Unit getPlayer();
  	Unit player;
  	//Not pointer because Unit will not be Loaded during turn.

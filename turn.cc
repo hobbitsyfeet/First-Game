@@ -7,17 +7,20 @@ using namespace std;
 
 //UPDATE//
 void Turn::run(Chart& world){
+
+
   string option;
 	string pname;
   int x,y;
   //load info
   getPlayer();
+  world.loadWorld(player.getCurrentWorld());
   world.setSpawn('O',player.posX,player.posY);
   cout<<"Loaded:"<<player.getName();
 	pname = player.getName();
 
   //start commands
-//worlds.loadWorld(option);
+
 
   while(option != "end"){
 
@@ -47,15 +50,20 @@ void Turn::run(Chart& world){
 			int dist;
 			cout<<"which way>>";
 			cin>>option;
-			cout<<"how much>>";
+			cout<<"how much>>"<<endl;
 
 			cin>>dist;
 			if(option == "north" || option == "up"){
-				//if(world.canEnter( player.getPosX(), (player.getPosY()+dist) ) )
 				for(int i =0; i<dist;i++){
-					cout<<i;
+					//cout<<i;
 					if( world.canEnter(player.getPosX(), player.getPosY()+1 ) ==false ){
 					player.posY += 1;
+					world.isPortal(player.getPosX(),player.getPosY(),spawning);
+						if(spawning == true){
+							world.setSpawn('O',player.posX,player.posY);
+							spawning = false;
+							break;
+						}
 					}
 					else{
 						break;
@@ -66,7 +74,14 @@ void Turn::run(Chart& world){
 			else if(option == "east" || option == "right"){
 				for(int i =0; i<dist;i++){	
 					if( world.canEnter(player.getPosX()+1, player.getPosY() ) ==false ){
-						player.posX += 1;}
+						player.posX += 1;
+						world.isPortal(player.getPosX(),player.getPosY(),spawning);
+						if(spawning == true){
+							world.setSpawn('O',player.posX,player.posY);
+							spawning = false;
+							break;
+						}	
+					}
 					else{
 						break;
 						}
@@ -76,7 +91,15 @@ void Turn::run(Chart& world){
 			else if(option == "south" || option == "down"){
 				for(int i =0; i<dist;i++){	
 					if( world.canEnter(player.getPosX(), player.getPosY()-1 ) ==false ){
-						player.posY -=1;}
+					world.isPortal(player.getPosX(),player.getPosY(),spawning);
+						if(spawning == true){
+							world.setSpawn('O',player.posX,player.posY);
+							spawning = false;
+							break;
+						}
+						player.posY -=1;
+
+					}
 					else{
 						break;
 						}
@@ -84,23 +107,25 @@ void Turn::run(Chart& world){
 			}
 
 			else if(option == "west" || option == "left"){
-				//if(world.canEnter( (player.getPosX()-dist), player.getPosY() ) )
 				for(int i =0; i<dist;i++){	
 					if( world.canEnter(player.getPosX()-1, player.getPosY() ) ==false ){
 						player.posX -=1;
+
+						world.isPortal(player.getPosX(),player.getPosY(),spawning);
+						if(spawning == true){
+							world.setSpawn('O',player.posX,player.posY);
+							spawning = false;
+							break;
+						}
 					}
 					else{
 						break;
 					}
 				}
 			}
-
-			world.isPortal(player.getPosX(),player.getPosY(),spawning);
-			if(spawning == true){
-				world.setSpawn('O',player.posX,player.posY);
-				spawning = false;
-			}
-				world.displayRange(player.getPosX(),player.getPosY(),5);
+			world.displayRange(player.getPosX(),player.getPosY(),5);
+			cout<<world.getChartName();
+			player.setCurrentWorld(world.getChartName());
 		}
 
 
@@ -108,7 +133,7 @@ void Turn::run(Chart& world){
 			//world.displayWorld();
 			//cout<<endl;
 			world.displayRange(player.getPosX(),player.getPosY(),5);
-			player.getPos();
+			//player.getPos();
 		}
 		else if(option == "pos"){
 			player.getPos();

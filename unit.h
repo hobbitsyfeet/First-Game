@@ -31,12 +31,15 @@ private:
 	bool torso;
 	bool legs;
 	bool feet;
+
+	string currentWorld;
 public:
 //CONSTRUCTORS
 				//name,level,health,attack
 	Unit(string="NoName", int=1,int =15,int=15,int=2, int=0,int =1,
 	int=0,int=45, int=0,int=0, int = 6, int =0, int=0,
-	bool=0,bool=0,bool=0,bool=0,bool=0);
+	bool=0,bool=0,bool=0,bool=0,bool=0,
+	string= "Farm_Yard");
 
 //*******Map_Position********
 	int posX;
@@ -64,6 +67,9 @@ public:
 	int getAttack()const;//
 	int getGold()const;//
 	int getStamina()const;//
+
+	void setCurrentWorld(string);
+	string getCurrentWorld()const;
 
 	void displayStats();
 

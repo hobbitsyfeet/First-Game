@@ -13,7 +13,7 @@ class Chart{
 		public:
 			//container();
 		//contains
-			bool canEnter(int,int);
+			//bool canEnter(int,int);
 			bool checkAvailable();
 			bool getOccupance();
 			char getGeoType();
@@ -52,6 +52,9 @@ class Chart{
 
 	bool getFogOfWar();
 	bool setFogOfWar();
+
+	string getChartName()const;
+	void setChartName(string);
 	//void playWorld();
 };
 
