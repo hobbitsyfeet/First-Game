@@ -12,7 +12,7 @@ void Turn::run(Chart& world){
   int x,y;
   //load info
   getPlayer();
-  world.searchFor('O',player.posX,player.posY);
+  world.setSpawn('O',player.posX,player.posY);
   cout<<"Loaded:"<<player.getName();
 	pname = player.getName();
 
@@ -43,6 +43,7 @@ void Turn::run(Chart& world){
     }
     //**MOVE**
     else if(option == "move"){
+			bool spawning;
 			int dist;
 			cout<<"which way>>";
 			cin>>option;
@@ -69,9 +70,12 @@ void Turn::run(Chart& world){
 				player.posX -= dist;
 			}
 
-			world.isPortal(player.getPosX(),player.getPosY());
-
-			world.displayRange(player.getPosX(),player.getPosY(),5);
+			world.isPortal(player.getPosX(),player.getPosY(),spawning);
+			if(spawning == true){
+				world.setSpawn('O',player.posX,player.posY);
+				spawning = false;
+			}
+				world.displayRange(player.getPosX(),player.getPosY(),5);
 		}
 
 

@@ -30,18 +30,28 @@ class Chart{
 	//2D vector
 	vector< vector<container> > world;
 	string worldName;
+
+
+	bool fogOfWar;
+	int chartWidth;
+	int chartHeight;
+	string chartName;
+
 	public:
 
-	Chart();
+	//Chart(string test,int 32, int 32, bool 0);
 	void displayWorld();
 	void loadWorld(string);
 	void saveWorld(string);
 	bool canEnter(int,int);
-	void searchFor(char, int&, int&);
+	void setSpawn(char, int&, int&);
 	void displayRange(int, int,int);
 
-	void isPortal(int,int);
+	void isPortal(int,int,bool&);
 	void findPath(int,int,int,int);
+
+	bool getFogOfWar();
+	bool setFogOfWar();
 	//void playWorld();
 };
 
