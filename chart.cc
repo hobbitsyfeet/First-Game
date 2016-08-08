@@ -175,6 +175,15 @@ void Chart::displayRange(int centrePosX,int centrePosY, int radius){
 }
 
 bool Chart::canEnter(int x, int y){
+	vector<vector <container> >::iterator row = world.end()-y;
+	vector<container> ::iterator col = row->begin()+x-1;
+	cout<<col->getPosX()<<','<<col->getPosY()<<endl;
+	if(col->getOccupance() == false){
+		cout<<"allowed to enter"<<endl;
+		return false;
+	}
+	else return true;
+	/*
 	int i=1,j=1;
 	//cout<<"starting canEnter";
 	vector<vector <container> >::iterator row;
@@ -197,6 +206,7 @@ bool Chart::canEnter(int x, int y){
 		i--;
 	}
 	return false;
+	*/
 }
 
 void Chart::setSpawn(char spawnPt, int& x, int&y){

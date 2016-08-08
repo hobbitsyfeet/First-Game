@@ -52,22 +52,47 @@ void Turn::run(Chart& world){
 			cin>>dist;
 			if(option == "north" || option == "up"){
 				//if(world.canEnter( player.getPosX(), (player.getPosY()+dist) ) )
-				player.posY += dist;
+				for(int i =0; i<dist;i++){
+					cout<<i;
+					if( world.canEnter(player.getPosX(), player.getPosY()+1 ) ==false ){
+					player.posY += 1;
+					}
+					else{
+						break;
+					}
+				}
 			}
 
 			else if(option == "east" || option == "right"){
-				//if(world.canEnter( (player.getPosX()+dist), player.getPosY() ) )
-				player.posX += dist;
+				for(int i =0; i<dist;i++){	
+					if( world.canEnter(player.getPosX()+1, player.getPosY() ) ==false ){
+						player.posX += 1;}
+					else{
+						break;
+						}
+				}
 			}
 
 			else if(option == "south" || option == "down"){
-				//if(world.canEnter(player.getPosX(), (player.getPosY()-dist) ) )
-				player.posY -= dist;
+				for(int i =0; i<dist;i++){	
+					if( world.canEnter(player.getPosX(), player.getPosY()-1 ) ==false ){
+						player.posY -=1;}
+					else{
+						break;
+						}
+				}
 			}
 
 			else if(option == "west" || option == "left"){
 				//if(world.canEnter( (player.getPosX()-dist), player.getPosY() ) )
-				player.posX -= dist;
+				for(int i =0; i<dist;i++){	
+					if( world.canEnter(player.getPosX()-1, player.getPosY() ) ==false ){
+						player.posX -=1;
+					}
+					else{
+						break;
+					}
+				}
 			}
 
 			world.isPortal(player.getPosX(),player.getPosY(),spawning);
